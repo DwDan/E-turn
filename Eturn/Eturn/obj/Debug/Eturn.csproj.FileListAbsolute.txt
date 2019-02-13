@@ -1,1 +1,6 @@
 C:\Users\Daniel\Source\Repos\E-turn\Eturn\Eturn\bin\Debug\Eturn.exe.config
+C:\Users\Daniel\Source\Repos\E-turn\Eturn\Eturn\bin\Debug\Eturn.exe
+C:\Users\Daniel\Source\Repos\E-turn\Eturn\Eturn\bin\Debug\Eturn.pdb
+C:\Users\Daniel\Source\Repos\E-turn\Eturn\Eturn\obj\Debug\Eturn.csprojResolveAssemblyReference.cache
+C:\Users\Daniel\Source\Repos\E-turn\Eturn\Eturn\obj\Debug\Eturn.exe
+C:\Users\Daniel\Source\Repos\E-turn\Eturn\Eturn\obj\Debug\Eturn.pdb
