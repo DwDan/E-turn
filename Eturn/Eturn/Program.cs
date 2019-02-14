@@ -39,7 +39,6 @@ namespace Eturn
                 new Palestra() { Index = "J", Descricao = "UX", Duracao = new TimeSpan(0, 30, 0) },
             };
 
-
             List<Palestra> Trilha01 = Recursivo(ListaPalestra, 9, string.Empty, 420);
             List<Palestra> Trilha02 = ListaPalestra.Where(x => !Trilha01.Aggregate(string.Empty, (a, b) => string.Format("{0}'{1}',", a, b.Index)).Contains(x.Index)).ToList();
 
@@ -49,8 +48,10 @@ namespace Eturn
             int Tamanho = 3;
             while (Tamanho <= 8 && (Trilha01Hora.Count == 0 && Trilha02Hora.Count == 0))
             {
-                Trilha01Hora = Recursivo(Trilha01, Tamanho, string.Empty, 180);
-                Trilha02Hora = Recursivo(Trilha02, Tamanho, string.Empty, 180);
+                if (Trilha01Hora.Count == 0) Trilha01Hora = Recursivo(Trilha01, Tamanho, string.Empty, 180);
+                if (Trilha02Hora.Count == 0) Trilha02Hora = Recursivo(Trilha02, Tamanho, string.Empty, 180);
+
+                Tamanho++;
             }
 
             if (Trilha01Hora.Count > 0 && Trilha02Hora.Count > 0)
