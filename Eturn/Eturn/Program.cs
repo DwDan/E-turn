@@ -12,12 +12,11 @@ namespace Eturn
         public string Descricao { get; set; }
         public TimeSpan Duracao { get; set; }
     }
-
     class Program
     {
         static void Main(string[] args)
         {
-            List<Palestra> ListaPaletra = new List<Palestra>()
+            List<Palestra> ListaPalestra = new List<Palestra>()
             {
                 new Palestra() { Index = "1", Descricao = "Escrevendo testes rápidos" , Duracao =  new TimeSpan(0, 60, 0) },
                 new Palestra() { Index = "2", Descricao = "Uma visão sobre Python", Duracao = new TimeSpan(0, 45, 0) },
@@ -40,38 +39,76 @@ namespace Eturn
                 new Palestra() { Index = "J", Descricao = "UX", Duracao = new TimeSpan(0, 30, 0) },
             };
 
-            List<string> Alfabeto = new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-            List<string> ListaCombinacao = new List<string>();
+
+            List<Palestra> Trilha01 = Recursivo(ListaPalestra, 9, string.Empty, 420);
+            List<Palestra> Trilha02 = ListaPalestra.Where(x => !Trilha01.Aggregate(string.Empty, (a, b) => string.Format("{0}'{1}',", a, b.Index)).Contains(x.Index)).ToList();
+
+            List<Palestra> Trilha01Hora = new List<Palestra>();
+            List<Palestra> Trilha02Hora = new List<Palestra>();
 
             int Tamanho = 3;
-            while (Tamanho <= 8)
+            while (Tamanho <= 8 && (Trilha01Hora.Count == 0 && Trilha02Hora.Count == 0))
             {
-                Recursividade(Alfabeto, Tamanho, string.Empty, ListaCombinacao);
-                Tamanho++;
+                Trilha01Hora = Recursivo(Trilha01, Tamanho, string.Empty, 180);
+                Trilha02Hora = Recursivo(Trilha02, Tamanho, string.Empty, 180);
             }
 
-            List<List<Palestra>> ListaPaletraCombinada = new List<List<Palestra>>();
-            foreach (string stringCombinada in ListaCombinacao)
+            if (Trilha01Hora.Count > 0 && Trilha02Hora.Count > 0)
             {
-                List<Palestra> Combinacao = ListaPaletra.Where(x => stringCombinada.Contains(x.Index)).ToList();
-                double TotalMinutos = TimeSpan.FromMinutes(Combinacao.Sum(x => x.Duracao.TotalMinutes)).TotalMinutes;
-                if (TotalMinutos == 180 || TotalMinutos == 240) ListaPaletraCombinada.Add(Combinacao);
+                List<Palestra> Trilha01Organizada = new List<Palestra>();
+                Trilha01Organizada.AddRange(Trilha01Hora);
+                Trilha01Organizada.Add(new Palestra() { Index = "K", Descricao = "Almoço", Duracao = new TimeSpan(0, 60, 0) });
+                Trilha01Organizada.AddRange(Trilha01.Where(x => !Trilha01Organizada.Aggregate(string.Empty, (a, b) => string.Format("{0}'{1}',", a, b.Index)).Contains(x.Index)).ToList());
+                Trilha01Organizada.Add(new Palestra() { Index = "L", Descricao = "Evento de Networking", Duracao = new TimeSpan(0, 0, 0) });
+
+                DateTime Data = Convert.ToDateTime(string.Format("{0} 09:00:00", DateTime.Now.ToString("dd/MM/yyyy")));
+                Console.WriteLine("Trilha 01");
+                foreach (Palestra Palestra in Trilha01Organizada)
+                {
+                    Console.WriteLine(string.Format("{0}: {1} - {2} min", Data.ToString("HH:mm"), Palestra.Descricao, Palestra.Duracao.TotalMinutes.ToString()));
+                    Data = Data.AddMinutes(Palestra.Duracao.TotalMinutes);
+                }
+
+                List<Palestra> Trilha02Organizada = new List<Palestra>();
+                Trilha02Organizada.AddRange(Trilha02Hora);
+                Trilha02Organizada.Add(new Palestra() { Index = "M", Descricao = "Almoço", Duracao = new TimeSpan(0, 60, 0) });
+                Trilha02Organizada.AddRange(Trilha02.Where(x => !Trilha02Organizada.Aggregate(string.Empty, (a, b) => string.Format("{0}'{1}',", a, b.Index)).Contains(x.Index)).ToList());
+                Trilha02Organizada.Add(new Palestra() { Index = "N", Descricao = "Evento de Networking", Duracao = new TimeSpan(0, 0, 0) });
+
+                Console.WriteLine(Environment.NewLine + "---------------------" + Environment.NewLine);
+                Data = Convert.ToDateTime(string.Format("{0} 09:00:00", DateTime.Now.ToString("dd/MM/yyyy")));
+
+                Console.WriteLine("Trilha 02");
+                foreach (Palestra Palestra in Trilha02Organizada)
+                {
+                    Console.WriteLine(string.Format("{0}: {1} - {2} min", Data.ToString("HH:mm"), Palestra.Descricao, Palestra.Duracao.TotalMinutes.ToString()));
+                    Data = Data.AddMinutes(Palestra.Duracao.TotalMinutes);
+                }
             }
         }
 
-        public static void Recursividade(List<string> Alfabeto, int Tamanho, string Combinacao, List<string> ListaCombinacao)
+        public static List<Palestra> Recursivo(List<Palestra> ListaPalestra, int Tamanho, string Combinacao, double TotalMinute)
         {
-            foreach (string Letra in Alfabeto)
+            List<Palestra> ListaEncontrada = new List<Palestra>();
+
+            foreach (string Letra in ListaPalestra.Where(x => !Combinacao.Contains(x.Index)).ToList().Select(x => x.Index))
             {
                 string CombinacaoAuxiliar = Combinacao;
                 int TamanhoAuxiliar = Tamanho;
 
                 CombinacaoAuxiliar += Letra;
 
-                if (TamanhoAuxiliar > 1) Recursividade(Alfabeto.Where(x => !CombinacaoAuxiliar.Contains(x)).ToList(), TamanhoAuxiliar - 1, CombinacaoAuxiliar, ListaCombinacao);
-                else ListaCombinacao.Add(CombinacaoAuxiliar);
+                if (TamanhoAuxiliar > 1)
+                {
+                    ListaEncontrada = Recursivo(ListaPalestra, TamanhoAuxiliar - 1, CombinacaoAuxiliar, TotalMinute);
+                    if (ListaEncontrada.Count > 0) return ListaEncontrada;
+                }
+
+                else if (ListaPalestra.Where(x => CombinacaoAuxiliar.Contains(x.Index)).Sum(x => x.Duracao.TotalMinutes) == TotalMinute)
+                    return ListaPalestra.Where(x => CombinacaoAuxiliar.Contains(x.Index)).ToList();
             }
+
+            return ListaEncontrada;
         }
     }
-
 }
