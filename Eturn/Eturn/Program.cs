@@ -39,6 +39,7 @@ namespace Eturn
                 new Palestra() { Index = "J", Descricao = "UX", Duracao = new TimeSpan(0, 30, 0) },
             };
 
+            // SEPARACAO EM TRILHAS POR MOTIVO DE DESEMPENHO
             List<Palestra> Trilha01 = Recursivo(ListaPalestra, 9, string.Empty, 420);
             List<Palestra> Trilha02 = ListaPalestra.Where(x => !Trilha01.Aggregate(string.Empty, (a, b) => string.Format("{0}'{1}',", a, b.Index)).Contains(x.Index)).ToList();
 
